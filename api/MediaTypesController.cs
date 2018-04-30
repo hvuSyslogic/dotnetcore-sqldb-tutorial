@@ -8,60 +8,60 @@ using Microsoft.EntityFrameworkCore;
 using DotNetCoreSqlDb.DataModels;
 using DotNetCoreSqlDb.Models;
 
-namespace DotNetCoreSqlDb.Controllers
+namespace DotNetCoreSqlDb.api
 {
     [Produces("application/json")]
-    [Route("api/Invoices")]
-    public class InvoicesController : Controller
+    [Route("api/[controller]")]
+    public class MediaTypesController : Controller
     {
         private readonly MyDatabaseContext _context;
 
-        public InvoicesController(MyDatabaseContext context)
+        public MediaTypesController(MyDatabaseContext context)
         {
             _context = context;
         }
 
-        // GET: api/Invoices
+        // GET: api/MediaTypes
         [HttpGet]
-        public IEnumerable<Invoice> GetInvoice()
+        public IEnumerable<MediaType> GetMediaType()
         {
-            return _context.Invoice;
+            return _context.MediaType;
         }
 
-        // GET: api/Invoices/5
+        // GET: api/MediaTypes/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetInvoice([FromRoute] int id)
+        public async Task<IActionResult> GetMediaType([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var invoice = await _context.Invoice.SingleOrDefaultAsync(m => m.InvoiceId == id);
+            var mediaType = await _context.MediaType.SingleOrDefaultAsync(m => m.MediaTypeId == id);
 
-            if (invoice == null)
+            if (mediaType == null)
             {
                 return NotFound();
             }
 
-            return Ok(invoice);
+            return Ok(mediaType);
         }
 
-        // PUT: api/Invoices/5
+        // PUT: api/MediaTypes/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInvoice([FromRoute] int id, [FromBody] Invoice invoice)
+        public async Task<IActionResult> PutMediaType([FromRoute] int id, [FromBody] MediaType mediaType)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != invoice.InvoiceId)
+            if (id != mediaType.MediaTypeId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(invoice).State = EntityState.Modified;
+            _context.Entry(mediaType).State = EntityState.Modified;
 
             try
             {
@@ -69,7 +69,7 @@ namespace DotNetCoreSqlDb.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!InvoiceExists(id))
+                if (!MediaTypeExists(id))
                 {
                     return NotFound();
                 }
@@ -82,45 +82,45 @@ namespace DotNetCoreSqlDb.Controllers
             return NoContent();
         }
 
-        // POST: api/Invoices
+        // POST: api/MediaTypes
         [HttpPost]
-        public async Task<IActionResult> PostInvoice([FromBody] Invoice invoice)
+        public async Task<IActionResult> PostMediaType([FromBody] MediaType mediaType)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.Invoice.Add(invoice);
+            _context.MediaType.Add(mediaType);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetInvoice", new { id = invoice.InvoiceId }, invoice);
+            return CreatedAtAction("GetMediaType", new { id = mediaType.MediaTypeId }, mediaType);
         }
 
-        // DELETE: api/Invoices/5
+        // DELETE: api/MediaTypes/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteInvoice([FromRoute] int id)
+        public async Task<IActionResult> DeleteMediaType([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var invoice = await _context.Invoice.SingleOrDefaultAsync(m => m.InvoiceId == id);
-            if (invoice == null)
+            var mediaType = await _context.MediaType.SingleOrDefaultAsync(m => m.MediaTypeId == id);
+            if (mediaType == null)
             {
                 return NotFound();
             }
 
-            _context.Invoice.Remove(invoice);
+            _context.MediaType.Remove(mediaType);
             await _context.SaveChangesAsync();
 
-            return Ok(invoice);
+            return Ok(mediaType);
         }
 
-        private bool InvoiceExists(int id)
+        private bool MediaTypeExists(int id)
         {
-            return _context.Invoice.Any(e => e.InvoiceId == id);
+            return _context.MediaType.Any(e => e.MediaTypeId == id);
         }
     }
 }

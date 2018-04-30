@@ -62,11 +62,11 @@ namespace DotNetCoreSqlDb
 
             app.UseMvc(routes =>
             {
-                routes.MapRoute("DefaultApi", "api/{controller}");
-   
-                   routes.MapRoute(
+                    routes.MapRoute(
                     name: "default",
                     template: "{controller=Todos}/{action=Index}/{id?}");
+                      routes.MapRoute("DefaultApi", "api/{controller}");
+
             });
         }
     }
