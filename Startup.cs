@@ -9,6 +9,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.EntityFrameworkCore;
 using DotNetCoreSqlDb.Models;
+using Swashbuckle.AspNetCore.Swagger;
+using System.Reflection;
+using System.IO;
 
 namespace DotNetCoreSqlDb
 {
@@ -29,6 +32,29 @@ namespace DotNetCoreSqlDb
             //    .AddAzureAdBearer(options => Configuration.Bind("AzureAd", options));
             // Add framework services.
             services.AddMvc();
+            services.AddSwaggerGen(c => 
+                {
+                    c.SwaggerDoc("v1", new Info { Title = "DotNetCoreSqlDbAPI}", Version = "v1",
+                        Description = "A simple example ASP.NET Core Web API",
+                        TermsOfService = "None",
+                        Contact = new Contact
+                        {
+                            Name = "Hung Vu",
+                            Email = string.Empty,
+                            Url = "https://twitter.com/hqvu81"
+                        },
+                        License = new License
+                        {
+                            Name = "Use under LICX",
+                            Url = "https://www.linkedin.com/profileofhungvu"
+                        }
+                    });
+
+                    // Set the comments path for the Swagger JSON and UI.
+                    var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
+                    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                    c.IncludeXmlComments(xmlPath);
+                });
 
             // Use SQL Database if in Azure, otherwise, use SQLite
             if (Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") == "Production")
@@ -59,6 +85,15 @@ namespace DotNetCoreSqlDb
             }
 
             app.UseStaticFiles();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.), specifying the Swagger JSON endpoint.
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "DotNetCoreSqlDbAPI V1");
+            });
 
             app.UseMvc(routes =>
             {

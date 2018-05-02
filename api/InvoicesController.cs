@@ -22,13 +22,20 @@ namespace DotNetCoreSqlDb.api
         }
 
         // GET: api/Invoices
-        [HttpGet]
+        /// <summary>
+        /// GET  all Invoices.
+        /// </summary>
+         [HttpGet]
         public IEnumerable<Invoice> GetInvoice()
         {
             return _context.Invoice;
         }
 
         // GET: api/Invoices/5
+        /// <summary>
+        /// GET  a specific Invoice.
+        /// <param name="id"></param>      
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetInvoice([FromRoute] int id)
         {
@@ -83,21 +90,57 @@ namespace DotNetCoreSqlDb.api
         }
 
         // POST: api/Invoices
+        /// <summary>
+        /// Post  a specific Invoice.
+        /// </summary>
+        /// <param name="invoice"></param>      
+        /// <summary>
+        /// Creates a Invoice item.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Todo
+        ///     {
+        ///        "id": 12,
+        ///        "CustomerId": "1",
+        ///        "InvoiceDate": "yyyy:mm:dd",
+        ///        "Total" : 12
+        ///     }
+        ///
+        /// </remarks>
+        /// <param name="invoice"></param>
+        /// <returns>A newly created TodoItem</returns>
+        /// <response code="201">Returns the newly created item</response>
+        /// <response code="400">If the item is null</response>            
+        [HttpPost]
+        [ProducesResponseType(typeof(Invoice), 201)]
+        [ProducesResponseType(400)]
         [HttpPost]
         public async Task<IActionResult> PostInvoice([FromBody] Invoice invoice)
         {
-            if (!ModelState.IsValid)
+            if (invoice == null || !ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
+            var tempInvoice = await _context.Invoice.SingleOrDefaultAsync(m => m.InvoiceId == invoice.InvoiceId);
 
+            if (invoice != null)
+            {
+                _context.Invoice.Update(invoice);
+                await _context.SaveChangesAsync();
+                return Ok(invoice);
+            }
             _context.Invoice.Add(invoice);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetInvoice", new { id = invoice.InvoiceId }, invoice);
         }
 
-        // DELETE: api/Invoices/5
+        /// <summary>
+        /// Deletes a specific Invoice.
+        /// </summary>
+        /// <param name="id"></param>      
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteInvoice([FromRoute] int id)
         {
